@@ -11,7 +11,7 @@ def dodraw():
     data["clientpos"] = draw(_map, data["items"]["guns"], data["items"]["health"], data["clientpos"], data["serverpos"])
 
 
-def donetworking(c, something_weird_that_i_need_to_make_bcuz_frickin_threading_doesnt_work):
+def donetworking(c):
     s.sendall(base64.encodebytes(json.dumps(data["clientpos"]).encode("utf-8")))
     try:
         data["serverpos"] = json.loads(base64.decodebytes(s.recv(1024)).decode("utf-8"))
@@ -116,7 +116,7 @@ first = time.time()
 # Start game
 while True:
     st = time.time()
-    threadnet = threading.Thread(target=donetworking, args=(s, 0))
+    threadnet = threading.Thread(target=donetworking, args=[s])
     threaddraw = threading.Thread(target=dodraw)
 
     threadnet.start()
