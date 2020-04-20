@@ -68,7 +68,6 @@ def draw(view, guns, health, p, pe):
         view[h[0]][h[1]] = "+"
 
     view1 = view
-    print(view1)
 
     view[pe[2]][pe[3]] = " "
     view[pe[0]][pe[1]] = "E"
@@ -90,6 +89,7 @@ def draw(view, guns, health, p, pe):
 
 fps = int()
 first = float()
+curfps = int()
 port = 2362
 st = float()
 nd = float()
@@ -163,16 +163,18 @@ while True:
 
         if time.time() - first >= 1:
             first = time.time()
+            curfps = fps
             fps = 1
         else:
             fps += 1
         print("\n")
-        print("Multiplayer Shooter v1".center(120) + "\n\t" + str(fps) + " FPS" + "\n" + "_" * 120)
+        print("Multiplayer Shooter v1".center(120) + "\n\t" + str(curfps) + " FPS" + "\n" + "_" * 120)
         threaddraw.start()
         threaddraw.join()
         print(nd - st)
 
         data["serverpos"] = detectkey(data["serverpos"], _map)
+        time.sleep(0.08)
         os.system("cls")
         nd = time.time()
     c.close()

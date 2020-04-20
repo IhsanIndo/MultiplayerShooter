@@ -12,6 +12,7 @@ def dodraw():
 
 
 def donetworking(c):
+    spst = time.time()
     s.sendall(base64.encodebytes(json.dumps(data["clientpos"]).encode("utf-8")))
     try:
         data["serverpos"] = json.loads(base64.decodebytes(s.recv(1024)).decode("utf-8"))
@@ -25,6 +26,8 @@ def donetworking(c):
         s.close()
         print("ERROR: CANNOT CONNECT TO THE ENEMY'S SOCKET \nREASON: The Enemy Might be AFK or Crashed")
         exit(1)
+    spnd = time.time()
+    curspeed = spnd - spst
 
 
 def detectkey(d, mp):
@@ -42,14 +45,14 @@ def detectkey(d, mp):
             pass
     if keyboard.is_pressed("a") and d[1] != 199:
         try:
-            if mp[d[0]][d[1] + 1] != "#":
-                d[1] += 1
+            if mp[d[0]][d[1] - 1] != "#":
+                d[1] -= 1
         except IndexError:
             pass
     if keyboard.is_pressed("d") and d[1] != 0:
         try:
-            if mp[d[0]][d[1] - 1] != "#":
-                d[1] -= 1
+            if mp[d[0]][d[1] + 1] != "#":
+                d[1] += 1
         except IndexError:
             pass
     return d
@@ -75,7 +78,6 @@ def draw(view, guns, health, p, pe):
         view[h[0]][h[1]] = "+"
 
     view1 = view
-    print(view1)
 
     view[pe[2]][pe[3]] = " "
     view[pe[0]][pe[1]] = "E"
@@ -91,12 +93,20 @@ def draw(view, guns, health, p, pe):
             unit += view1[y][x]
         print(unit)
         unit = ""
+    return p
 
+
+curspeed = float()
+spst = float()
+spnd = float()
 
 port = 2362
+
 fps = 0
+curfps = 0
 data = {}
 _map = []
+
 st = float()
 nd = float()
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -123,17 +133,21 @@ while True:
 
     if time.time() - first >= 1:
         first = time.time()
+        curfps = fps
         fps = 1
     else:
         fps += 1
     print("\n")
-    print("Multiplayer Shooter v1".center(120) + "\n\t" + str(fps) + " FPS" + "\n" + "_" * 120)
+    print("Multiplayer Shooter v1".center(120) + "\n\t" + str(curfps) + " FPS, Data speed: " + str(
+        curspeed) + "\n" + "_" * 120)
     threaddraw.start()
     threaddraw.join()
+    print(data)
     print(nd - st)
 
     data["clientpos"] = detectkey(data["clientpos"], _map)
 
+    time.sleep(0.08)
     os.system("cls")
     nd = time.time()
 s.close()
